@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product App</title>
+    @include('layouts.style')
 </head>
 <body>
 <h1>Product Management SpringBoot</h1>
@@ -13,5 +14,6 @@
     <div>
         @yield('content')
     </div>
+    @include('layouts.js')
 </body>
 </html>

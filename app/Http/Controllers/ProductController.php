@@ -54,28 +54,38 @@ class ProductController extends Controller
     
     public function update(Request $request, $productId)
     {
-        // Validate the incoming request data
-        $request->validate([
-            'product_name' => 'required|string',
-            'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,category_id',
-            'supplier_id' => 'required|exists:suppliers,supplier_id',
-        ]);
-    
-        // Update the product using the Spring Boot API service
-        $updatedProduct = $this->springBootApiService->updateProduct($productId, [
-            'product_name' => $request->input('product_name'),
-            'price' => $request->input('price'),
-            'category_id' => $request->input('category_id'),
-            'supplier_id' => $request->input('supplier_id'),
-            // Add any other fields as needed
-        ]);
-    
-        // You can handle the response from the API service as needed
-        // For example, check if the product was updated successfully
-    
-        // Redirect back to the product index page or wherever you want
-        return redirect()->route('product.index')->with('success', 'Product updated successfully');
+        try {
+            // Validate the incoming request data
+            $request->validate([
+                'product_name' => 'required|string',
+                'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,category_id',
+                'supplier_id' => 'required|exists:suppliers,supplier_id',
+                // Add any other validation rules for additional fields
+            ]);
+
+            // Update the product using the Spring Boot API service
+            $updatedProduct = $this->springBootApiService->updateProduct($productId, [
+                'product_name' => $request->input('product_name'),
+                'price' => $request->input('price'),
+                'category_id' => $request->input('category_id'),
+                'supplier_id' => $request->input('supplier_id'),
+                // Add any other fields as needed
+            ]);
+
+            // Check if the product was updated successfully
+            if ($updatedProduct) {
+                return redirect()->route('product.index')->with('success', 'Product updated successfully');
+            } else {
+                return redirect()->route('product.index')->with('error', 'Failed to update product');
+            }
+        } catch (\Exception $e) {
+            // Log the exception for debugging
+            logger()->error('Error updating product: ' . $e->getMessage());
+
+            // Redirect back with an error message
+            return redirect()->route('product.index')->with('error', 'An error occurred while updating the product');
+        }
     }
     
     public function destroy($productId)

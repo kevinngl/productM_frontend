@@ -1,6 +1,6 @@
  <!-- Simple form to add product data -->
  <h2>Add Product</h2>
-    <form action="#" method="post">
+    <form action="{{ route('product.store') }}" method="post">
         @csrf
         <label for="product_name">Product Name:</label>
         <input type="text" name="product_name" required>
